@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-// used for uploading to bintray jCenter.
+// used for uploading to jCenter.
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
+        versionCode 100001
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,8 +24,8 @@ android {
         }
     }
 
-    // used for uploading to bintray jCenter.
-    lintOptions{
+    // used for uploading to jCenter.
+    lintOptions {
         abortOnError false
         checkReleaseBuilds false
     }
@@ -42,72 +42,113 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
 }
 
-// 以下為jCenter上傳用。參見：https://rayzhangweb.wordpress.com/2017/02/19/android-library%E4%B8%8A%E5%82%B3%E8%87%B3jcenter%EF%BC%8C%E4%B8%80%E6%AC%A1%E5%B0%B1%E4%B8%8A%E6%89%8B/
-def siteUrl = 'https://github.com/samuelchou/LotusUtil'
-def gitUrl = 'https://github.com/samuelchou/LotusUtil.git'
-group = "studio.ultoolapp.lotusutil" // 呼叫時會有差別
-version = "1.0.0" // 更新library時記得修改這個版本
+// 以下為jCenter上傳用。參見：https://medium.com/@yegor_zatsepin/simple-way-to-publish-your-android-library-to-jcenter-d1e145bacf13
+ext {
+    bintrayRepo = 'lotus_util'
+    bintrayName = 'stdutil'
+
+    publishedGroupId = 'studio.ultoolapp.lotusutil'
+    libraryName = 'Std Util'
+    artifact = 'stdutil'
+
+    libraryDescription = 'This useful library contains several Android app dev essential or convenient util scripts.'
+
+    siteUrl = 'https://github.com/samuelchou/LotusUtil'
+    gitUrl = 'https://github.com/samuelchou/LotusUtil.git'
+
+    libraryVersion = '1.0.1'
+
+    developerId = 'samuelchou'
+    developerName = 'STC'
+    developerEmail = 'stc.ntu@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId
+version = libraryVersion
 
 install {
     repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                // description
-                name 'This util lib let you use toast easily and wisely in andoird.'
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
                 url siteUrl
-                // license
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'samuelchou'
-                        name 'STC'
-                        email 'stc.ntu@gmail.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
             }
         }
     }
 }
+
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set('sources') // https://discuss.gradle.org/t/publishing-jars-with-classifiers-after-v5-0/30144/2
 }
+
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
+
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompileProvider.get().classpath.files
+    })
+}
+// 用來幫助javadoc進行正確的跨庫說明引用。參見： https://stackoverflow.com/a/34572606/9735961
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier.set('javadoc')
     from javadoc.destinationDir
 }
+
 artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
+
     configurations = ['archives']
     pkg {
-        repo = "lotus_util"      // 這邊是對應jCenter的倉庫名稱
-        name = "std_util"    // 發佈到jCenter上的項目名稱
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
         websiteUrl = siteUrl
         vcsUrl = gitUrl
-        licenses = ["Apache-2.0"]
+        licenses = allLicenses
         publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
     }
 }
