@@ -32,7 +32,9 @@ public abstract class EasyRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     }
 
     /**
-     * @param position 注意這裡的數字只會是0 ~ data-1， <b>並不會包含Header或Footer。</b>設定header或footer請使用 {@link #getHeaderView()} / {@link #getFooterView()}。
+     * @param itemView 該清單項目的View元件。
+     * @param position 項目編號。當需要設定依照編號變化時請使用該參數。（例如：單雙項目背景。）注意這裡的數字只會是0 ~ data-1， <b>並不會包含Header或Footer。</b>設定header或footer請使用 {@link #getHeaderView()} / {@link #getFooterView()}。
+     * @param data 與清單項目相對應的data。
      */
     public abstract void bindData(View itemView, int position, T data);
 
