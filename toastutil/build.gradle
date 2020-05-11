@@ -2,8 +2,6 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-// 更新library時記得修改這個版本
-version = "1.0.0"
 
 android {
     compileSdkVersion 28
@@ -44,6 +42,9 @@ dependencies {
 def siteUrl = 'https://github.com/samuelchou/LotusUtil.git'
 def gitUrl = 'https://github.com/samuelchou/LotusUtil.git'
 group = "studio.ultoolapp.lotusutil" // 呼叫時會有差別
+// 更新library時記得修改這個版本
+version = "1.0.0"
+
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
