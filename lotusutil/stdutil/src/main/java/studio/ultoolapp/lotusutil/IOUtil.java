@@ -1,4 +1,4 @@
-package studio.stc.lotusutil.util;
+package studio.ultoolapp.lotusutil;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 public final class IOUtil {
     /**
      * 收起鍵盤。(如果有的話)
@@ -18,7 +20,7 @@ public final class IOUtil {
      */
     public static void hideKeyboardFrom(@NonNull Context context, @NonNull View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        Objects.requireNonNull(imm).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     /**
@@ -68,6 +70,6 @@ public final class IOUtil {
     public static void CopyText(Context context, String textToCopy) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("simple text", textToCopy);
-        clipboard.setPrimaryClip(clip);
+        Objects.requireNonNull(clipboard).setPrimaryClip(clip);
     }
 }
