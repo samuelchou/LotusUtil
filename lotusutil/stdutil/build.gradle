@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 100001
-        versionName "1.0"
+        versionCode 200000
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -56,7 +56,7 @@ ext {
     siteUrl = 'https://github.com/samuelchou/LotusUtil'
     gitUrl = 'https://github.com/samuelchou/LotusUtil.git'
 
-    libraryVersion = '1.0.1'
+    libraryVersion = '2.0.0'
 
     developerId = 'samuelchou'
     developerName = 'STC'
