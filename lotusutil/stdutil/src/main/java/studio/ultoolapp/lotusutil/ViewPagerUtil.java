@@ -44,6 +44,8 @@ public class ViewPagerUtil {
     }
 
     public static final class FragmentAdapter extends FragmentPagerAdapter {
+        private static final String TAG = "FragmentAdapter";
+
         private List<Fragment> mFragmentList = new ArrayList<>();
         private List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -51,7 +53,7 @@ public class ViewPagerUtil {
          * @param manager 建議使用 {@link FragmentActivity#getSupportFragmentManager()} 輸入。
          */
         public FragmentAdapter(FragmentManager manager) {
-            super(manager);
+            super(manager, FragmentAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
@@ -67,6 +69,41 @@ public class ViewPagerUtil {
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
+        }
+
+        public void addFragment(Fragment fragment, String title, int atPosition) {
+            if (atPosition >= mFragmentList.size()) {
+                Log.w(TAG, "addFragment: trying to add fragment at out-of-list position. Will be treated as add at last.");
+                addFragment(fragment, title);
+                return;
+            } else if (atPosition < 0) {
+                Log.w(TAG, "addFragment: trying to add fragment at negative position! Will be treated as add at first.");
+                atPosition = 0;
+            }
+            mFragmentList.add(atPosition, fragment);
+            mFragmentTitleList.add(atPosition, title);
+        }
+
+        public void removeFragment(int position) {
+            mFragmentList.remove(position);
+            mFragmentTitleList.remove(position);
+        }
+
+        public void removeFragment(Fragment fragment) {
+            int position = mFragmentList.indexOf(fragment);
+            if (position < 0) {
+                Log.e(TAG, "removeFragment: trying to remove a fragment which has not been added to this adapter. (Operation ignored.)", new IndexOutOfBoundsException());
+                return;
+            }
+            removeFragment(position);
+        }
+
+        public void setPageTitle(int position, String title) {
+            if (position >= mFragmentTitleList.size() || position < 0) {
+                Log.e(TAG, "setPageTitle: illegal position: too large or negative! (Operation ignored.)", new IndexOutOfBoundsException());
+                return;
+            }
+            mFragmentTitleList.set(position, title);
         }
 
         @Override
