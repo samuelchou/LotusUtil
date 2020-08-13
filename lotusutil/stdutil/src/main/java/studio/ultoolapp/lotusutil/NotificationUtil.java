@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -98,7 +99,7 @@ public final class NotificationUtil {
     public static NotificationCompat.Builder getNotificationBuilder(Context context, String channelID, String channelName, int level) {
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = getNotificationChannel(context, EXAMPLE_CHANNEL_ID, EXAMPLE_CHANNEL_NAME, level);
+            NotificationChannel channel = getNotificationChannel(context, channelID, channelName, level);
             builder = new NotificationCompat.Builder(context, channel.getId());
         } else {
             builder = new NotificationCompat.Builder(context).setPriority(LevelToPriority16(level));
@@ -107,7 +108,36 @@ public final class NotificationUtil {
     }
 
     /**
-     * 在Android 8.0 / API 26 以後出現的新東西，會使你的通知在App Info中進行分類。一般來說只要一個頻道即可。預設重要性為Default(提示聲音)
+     * 獲得一個通知建構器，重要性/優先級設定為預設。
+     *
+     * @param context 上下文。
+     * @param channel 頻道。
+     * @return 一個通知建構器。
+     */
+    public static NotificationCompat.Builder getNotificationBuilder(Context context, @NonNull NotificationChannel channel) {
+        return getNotificationBuilder(context, channel, NOTIFICATION_LEVEL_DEFAULT);
+    }
+
+    /**
+     * 獲得一個通知建構器。
+     *
+     * @param context 上下文。
+     * @param channel 頻道。
+     * @param level   通知重要性/優先級，請使用本Util的LEVEL參數系列。參見 https://developer.android.com/training/notify-user/channels#importance
+     * @return 一個通知建構器。
+     */
+    public static NotificationCompat.Builder getNotificationBuilder(Context context, @NonNull NotificationChannel channel, int level) {
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new NotificationCompat.Builder(context, channel.getId());
+        } else {
+            builder = new NotificationCompat.Builder(context).setPriority(LevelToPriority16(level));
+        }
+        return builder;
+    }
+
+    /**
+     * 頻道是Android 8.0 / API 26 以後出現的新東西，會使你的通知在App Info中進行分類。一般來說只要一個頻道即可。預設重要性為Default(提示聲音)
      * 該方法會嘗試尋找這個頻道；如果沒有找到，則創建一個。
      * See: https://developer.android.com/training/notify-user/channels
      *
@@ -122,7 +152,7 @@ public final class NotificationUtil {
     }
 
     /**
-     * 在Android 8.0 / API 26 以後出現的新東西，會使你的通知在App Info中進行分類。一般來說只要一個頻道即可。
+     * 頻道是Android 8.0 / API 26 以後出現的新東西，會使你的通知在App Info中進行分類。一般來說只要一個頻道即可。
      * 該方法會嘗試尋找這個頻道；如果沒有找到，則創建一個。
      * See: https://developer.android.com/training/notify-user/channels
      *
@@ -139,8 +169,19 @@ public final class NotificationUtil {
         return channel != null ? channel : createNotificationChannel(context, channelID, channelName, importance);
     }
 
+    /**
+     * 頻道是Android 8.0 / API 26 以後出現的新東西，會使你的通知在App Info中進行分類。一般來說只要一個頻道即可。
+     * 該方法會創建一個頻道。一般場合，建議使用 #getNotificationChannel 即可。
+     * See: https://developer.android.com/training/notify-user/channels
+     *
+     * @param context     上下文。用來進行資源獲取。
+     * @param channelID   頻道ID (API27以後被使用)。必須為單一存在、不可重複的頻道字串。頻道ID並不會顯示給使用者。
+     * @param channelName 頻道名稱 (API27以後被使用)。會顯示在使用者App Info中。
+     * @param importance  設定重要性。請使用NotificationManager.IMPORTANCE_...系列。
+     * @return 找到或創建的頻道。
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static NotificationChannel createNotificationChannel(Context context, String channelID, String channelName, int importance) {
+    public static NotificationChannel createNotificationChannel(Context context, String channelID, String channelName, int importance) {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(channelID, channelName, importance);
