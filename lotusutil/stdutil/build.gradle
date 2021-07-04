@@ -1,15 +1,11 @@
 apply plugin: 'com.android.library'
 
-// used for uploading to jCenter.
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
-
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 202000
         versionName '2.2.0'
 
@@ -24,130 +20,15 @@ android {
         }
     }
 
-    // used for uploading to jCenter.
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.google.android.material:material:1.2.0'
-}
-
-// 以下為jCenter上傳用。參見：https://medium.com/@yegor_zatsepin/simple-way-to-publish-your-android-library-to-jcenter-d1e145bacf13
-ext {
-    bintrayRepo = 'lotus_util'
-    bintrayName = 'stdutil'
-
-    publishedGroupId = 'studio.ultoolapp.lotusutil'
-    libraryName = 'Std Util'
-    artifact = 'stdutil'
-
-    libraryDescription = 'This useful library contains several Android app dev essential or convenient util scripts.'
-
-    siteUrl = 'https://github.com/samuelchou/LotusUtil'
-    gitUrl = 'https://github.com/samuelchou/LotusUtil.git'
-
-    libraryVersion = '2.2.0'
-
-    developerId = 'samuelchou'
-    developerName = 'STC'
-    developerEmail = 'stc.ntu@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
-version = libraryVersion
-
-install {
-    repositories.mavenInstaller {
-        pom.project {
-            packaging 'aar'
-            groupId publishedGroupId
-            artifactId artifact
-
-            name libraryName
-            description libraryDescription
-            url siteUrl
-
-            licenses {
-                license {
-                    name licenseName
-                    url licenseUrl
-                }
-            }
-            developers {
-                developer {
-                    id developerId
-                    name developerName
-                    email developerEmail
-                }
-            }
-            scm {
-                connection gitUrl
-                developerConnection gitUrl
-                url siteUrl
-            }
-        }
-    }
-}
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    archiveClassifier.set('sources') // https://discuss.gradle.org/t/publishing-jars-with-classifiers-after-v5-0/30144/2
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-afterEvaluate {
-    javadoc.classpath += files(android.libraryVariants.collect { variant ->
-        variant.javaCompileProvider.get().classpath.files
-    })
-}
-// 用來幫助javadoc進行正確的跨庫說明引用。參見： https://stackoverflow.com/a/34572606/9735961
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier.set('javadoc')
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-        }
-    }
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
 }
