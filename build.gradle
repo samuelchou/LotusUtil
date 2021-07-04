@@ -10,10 +10,6 @@ buildscript {
         
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-
-        // module upload to jCenter
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
     }
 }
 
@@ -21,14 +17,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-    }
-    // 防止上傳到jCenter時編碼失敗。參見 https://rayzhangweb.wordpress.com/2017/02/19/android-library%E4%B8%8A%E5%82%B3%E8%87%B3jcenter%EF%BC%8C%E4%B8%80%E6%AC%A1%E5%B0%B1%E4%B8%8A%E6%89%8B/
-    tasks.withType(Javadoc) {
-        options{
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            links "http://docs.oracle.com/javase/7/docs/api"
-        }
     }
 }
 
