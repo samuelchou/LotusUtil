@@ -4,9 +4,15 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
+
 public class ToastUtil {
     private static final String TAG = "ToastUtil";
     private static Toast mOnlyToast;
+
+    public static void OnlyToast(Context context, @StringRes int stringId) {
+        OnlyToast(context, context.getString(stringId));
+    }
 
     public static void OnlyToast(Context context, String text) {
         //此方法只會顯示一個Toast
