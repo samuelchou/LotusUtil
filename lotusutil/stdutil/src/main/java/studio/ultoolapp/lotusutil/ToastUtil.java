@@ -5,7 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class ToastUtil {
-    private static String TAG = "ToastUtil";
+    private static final String TAG = "ToastUtil";
     private static Toast mOnlyToast;
 
     public static void OnlyToast(Context context, String text) {
@@ -15,9 +15,10 @@ public class ToastUtil {
             Log.e(TAG, "OnlyToast: null context! won't show toast.", new NullPointerException("輸入了空的context!"));
             return;
         }
-        if (mOnlyToast != null && mOnlyToast.getView().isShown()) {
-            mOnlyToast.cancel();
-        }
+        if (mOnlyToast != null)
+            if (mOnlyToast.getView() != null && mOnlyToast.getView().isShown()) {
+                mOnlyToast.cancel();
+            }
         mOnlyToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
         mOnlyToast.show();
     }
